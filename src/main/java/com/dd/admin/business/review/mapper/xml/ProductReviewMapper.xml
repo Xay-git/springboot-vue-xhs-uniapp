@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.business.review.mapper.ProductReviewMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.business.review.entity.ProductReview">
+        <id column="REVIEW_ID" property="reviewId" />
+        <result column="ORDER_ID" property="orderId" />
+        <result column="ITEM_ID" property="itemId" />
+        <result column="PRODUCT_ID" property="productId" />
+        <result column="AUTHOR_ID" property="authorId" />
+        <result column="CONTENT" property="content" />
+        <result column="RATING" property="rating" />
+        <result column="IMG_ID" property="imgId" />
+        <result column="IMG_URL" property="imgUrl" />
+        <result column="VERSION" property="version" />
+        <result column="DELETED" property="deleted" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="UPDATE_TIME" property="updateTime" />
+    </resultMap>
+
+    <!-- 包含商品信息的结果映射 -->
+    <resultMap id="ReviewDetailResultMap" type="com.dd.admin.business.review.vo.ProductReviewVo">
+        <id column="REVIEW_ID" property="reviewId" />
+        <result column="ORDER_ID" property="orderId" />
+        <result column="ITEM_ID" property="itemId" />
+        <result column="PRODUCT_ID" property="productId" />
+        <result column="AUTHOR_ID" property="authorId" />
+        <result column="CONTENT" property="content" />
+        <result column="RATING" property="rating" />
+        <result column="IMG_ID" property="imgId" />
+        <result column="IMG_URL" property="imgUrl" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="UPDATE_TIME" property="updateTime" />
+        <result column="PRODUCT_NAME" property="productName" />
+        <result column="PRODUCT_IMAGE" property="productImage" />
+        <result column="PRODUCT_PRICE" property="productPrice" />
+        <result column="AUTHOR_NAME" property="authorName" />
+        <result column="AVATAR_URL" property="avatarUrl" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        REVIEW_ID, ORDER_ID, ITEM_ID, PRODUCT_ID, AUTHOR_ID, CONTENT, RATING, IMG_ID, IMG_URL, VERSION, DELETED, CREATE_TIME, UPDATE_TIME
+    </sql>
+
+    <!-- 根据订单ID查询评价列表 -->
+    <select id="selectByOrderId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM business_product_review
+        WHERE ORDER_ID = #{orderId} AND DELETED = 0
+        ORDER BY CREATE_TIME DESC
+    </select>
+
+    <!-- 根据订单ID和商品ID查询评价 -->
+    <select id="selectByOrderIdAndProductId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM business_product_review
+        WHERE ORDER_ID = #{orderId} AND PRODUCT_ID = #{productId} AND DELETED = 0
+        LIMIT 1
+    </select>
+
+    <!-- 查询订单商品评价详情（包含商品信息） -->
+    <select id="selectReviewDetailsByOrderId" resultMap="ReviewDetailResultMap">
+        SELECT 
+            r.REVIEW_ID, r.ORDER_ID, r.ITEM_ID, r.PRODUCT_ID, r.AUTHOR_ID, 
+            r.CONTENT, r.RATING, r.IMG_ID, r.IMG_URL, r.VERSION, r.DELETED, 
+            r.CREATE_TIME, r.UPDATE_TIME,
+            oi.PRODUCT_NAME, p.FIRST_PICTURE_URL as PRODUCT_IMAGE,
+            a.AUTHOR_NAME
+        FROM business_product_review r
+        LEFT JOIN business_order_item oi ON r.ORDER_ID = oi.ORDER_ID AND r.PRODUCT_ID = oi.PRODUCT_ID AND oi.DELETED = 0
+        LEFT JOIN business_product p ON r.PRODUCT_ID = p.PRODUCT_ID AND p.DELETED = 0
+        LEFT JOIN business_author a ON r.AUTHOR_ID = a.AUTHOR_ID AND a.DELETED = 0
+        WHERE r.ORDER_ID = #{orderId} AND r.DELETED = 0
+        ORDER BY r.CREATE_TIME DESC
+    </select>
+
+    <!-- 根据商品ID查询评论列表（包含用户信息） -->
+    <select id="selectReviewsByProductId" resultMap="ReviewDetailResultMap">
+        SELECT 
+            r.REVIEW_ID, r.ORDER_ID, r.ITEM_ID, r.PRODUCT_ID, r.AUTHOR_ID, 
+            r.CONTENT, r.RATING, r.IMG_ID, r.IMG_URL, r.VERSION, r.DELETED, 
+            r.CREATE_TIME, r.UPDATE_TIME,
+            p.PRODUCT_NAME, p.FIRST_PICTURE_URL as PRODUCT_IMAGE, p.PRODUCT_PRICE,
+            a.AUTHOR_NAME, a.AVATAR_URL
+        FROM business_product_review r
+        LEFT JOIN business_product p ON r.PRODUCT_ID = p.PRODUCT_ID AND p.DELETED = 0
+        LEFT JOIN business_author a ON r.AUTHOR_ID = a.AUTHOR_ID AND a.DELETED = 0
+        WHERE r.PRODUCT_ID = #{productId} AND r.DELETED = 0
+        ORDER BY r.CREATE_TIME DESC
+    </select>
+
+    <!-- 分页查询评价列表 -->
+    <select id="selectReviewPage" resultMap="ReviewDetailResultMap">
+        SELECT 
+            r.REVIEW_ID, r.ORDER_ID, r.ITEM_ID, r.PRODUCT_ID, r.AUTHOR_ID, 
+            r.CONTENT, r.RATING, r.IMG_ID, r.IMG_URL, r.VERSION, r.DELETED, 
+            r.CREATE_TIME, r.UPDATE_TIME,
+            p.PRODUCT_NAME, p.FIRST_PICTURE_URL as PRODUCT_IMAGE, p.PRODUCT_PRICE,
+            a.AUTHOR_NAME, a.AVATAR_URL
+        FROM business_product_review r
+        LEFT JOIN business_product p ON r.PRODUCT_ID = p.PRODUCT_ID AND p.DELETED = 0
+        LEFT JOIN business_author a ON r.AUTHOR_ID = a.AUTHOR_ID AND a.DELETED = 0
+        WHERE r.DELETED = 0
+        <if test="reviewDto.reviewId != null and reviewDto.reviewId != ''">
+            AND r.REVIEW_ID = #{reviewDto.reviewId}
+        </if>
+        <if test="reviewDto.orderId != null and reviewDto.orderId != ''">
+            AND r.ORDER_ID = #{reviewDto.orderId}
+        </if>
+        <if test="reviewDto.productId != null and reviewDto.productId != ''">
+            AND r.PRODUCT_ID = #{reviewDto.productId}
+        </if>
+        <if test="reviewDto.productName != null and reviewDto.productName != ''">
+            AND p.PRODUCT_NAME LIKE CONCAT('%', #{reviewDto.productName}, '%')
+        </if>
+        <if test="reviewDto.authorId != null and reviewDto.authorId != ''">
+            AND r.AUTHOR_ID = #{reviewDto.authorId}
+        </if>
+        <if test="reviewDto.authorName != null and reviewDto.authorName != ''">
+            AND a.AUTHOR_NAME LIKE CONCAT('%', #{reviewDto.authorName}, '%')
+        </if>
+        <if test="reviewDto.rating != null">
+            AND r.RATING = #{reviewDto.rating}
+        </if>
+        <if test="reviewDto.content != null and reviewDto.content != ''">
+            AND r.CONTENT LIKE CONCAT('%', #{reviewDto.content}, '%')
+        </if>
+        ORDER BY r.CREATE_TIME DESC
+    </select>
+
+    <!-- 根据ID查询评价详情 -->
+    <select id="selectReviewById" resultMap="ReviewDetailResultMap">
+        SELECT 
+            r.REVIEW_ID, r.ORDER_ID, r.ITEM_ID, r.PRODUCT_ID, r.AUTHOR_ID, 
+            r.CONTENT, r.RATING, r.IMG_ID, r.IMG_URL, r.VERSION, r.DELETED, 
+            r.CREATE_TIME, r.UPDATE_TIME,
+            p.PRODUCT_NAME, p.FIRST_PICTURE_URL as PRODUCT_IMAGE, p.PRODUCT_PRICE,
+            a.AUTHOR_NAME, a.AVATAR_URL
+        FROM business_product_review r
+        LEFT JOIN business_product p ON r.PRODUCT_ID = p.PRODUCT_ID AND p.DELETED = 0
+        LEFT JOIN business_author a ON r.AUTHOR_ID = a.AUTHOR_ID AND a.DELETED = 0
+        WHERE r.REVIEW_ID = #{reviewId} AND r.DELETED = 0
+    </select>
+
+</mapper>

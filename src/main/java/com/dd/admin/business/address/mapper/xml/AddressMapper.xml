@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.business.address.mapper.AddressMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.business.address.entity.Address">
+        <id column="ADDRESS_ID" property="addressId" />
+        <result column="USER_ID" property="userId" />
+        <result column="RECEIVER_NAME" property="receiverName" />
+        <result column="RECEIVER_PHONE" property="receiverPhone" />
+        <result column="PROVINCE" property="province" />
+        <result column="CITY" property="city" />
+        <result column="DISTRICT" property="district" />
+        <result column="DETAIL_ADDRESS" property="detailAddress" />
+        <result column="IS_DEFAULT" property="isDefault" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="CREATE_NAME" property="createName" />
+        <result column="CREATE_ID" property="createId" />
+        <result column="UPDATE_TIME" property="updateTime" />
+        <result column="UPDATE_NAME" property="updateName" />
+        <result column="UPDATE_ID" property="updateId" />
+        <result column="VERSION" property="version" />
+        <result column="DELETED" property="deleted" />
+        <result column="BRAND_ID" property="brandId" />
+        <result column="BRAND_NAME" property="brandName" />
+        <result column="SHOP_ID" property="shopId" />
+        <result column="SHOP_NAME" property="shopName" />
+        <result column="DEPT_NAME" property="deptName" />
+        <result column="DEPT_ID" property="deptId" />
+        <result column="REMARK" property="remark" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ADDRESS_ID, USER_ID, RECEIVER_NAME, RECEIVER_PHONE, PROVINCE, CITY, DISTRICT, DETAIL_ADDRESS, IS_DEFAULT,
+        CREATE_TIME, CREATE_NAME, CREATE_ID, UPDATE_TIME, UPDATE_NAME, UPDATE_ID, VERSION, DELETED,
+        BRAND_ID, BRAND_NAME, SHOP_ID, SHOP_NAME, DEPT_NAME, DEPT_ID, REMARK
+    </sql>
+
+</mapper>

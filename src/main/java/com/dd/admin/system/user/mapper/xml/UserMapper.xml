@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.system.user.mapper.UserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.system.user.entity.User">
+        <id column="USER_ID" property="userId" />
+        <result column="USER_NAME" property="userName" />
+        <result column="AVATAR" property="avatar" />
+        <result column="PASSWORD" property="password" />
+        <result column="PHONE_NUMBER" property="phoneNumber" />
+        <result column="USER_TYPE" property="userType" />
+        <result column="USER_STATUS" property="userStatus" />
+        <result column="REMARK" property="remark" />
+        <result column="DEPT_ID" property="deptId" />
+        <result column="DEPT_NAME" property="deptName" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="CREATE_NAME" property="createName" />
+        <result column="CREATE_ID" property="createId" />
+        <result column="UPDATE_TIME" property="updateTime" />
+        <result column="UPDATE_NAME" property="updateName" />
+        <result column="UPDATE_ID" property="updateId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        USER_ID, USER_NAME, AVATAR, PASSWORD, PHONE_NUMBER, USER_TYPE, USER_STATUS, REMARK, DEPT_ID, DEPT_NAME, CREATE_TIME, CREATE_NAME, CREATE_ID, UPDATE_TIME, UPDATE_NAME, UPDATE_ID
+    </sql>
+
+    <select id="selectUserPage" resultType="com.dd.admin.system.user.domain.UserVo">
+        select
+        *
+        from sys_user where 1 = 1
+        <if test="userDto.deptId != null and userDto.deptId != ''">
+            and DEPT_ID = #{userDto.deptId}
+        </if>
+    </select>
+
+    <select id="selectUserList" resultType="com.dd.admin.system.user.domain.UserVo">
+        select
+        *
+        from sys_user where 1 = 1
+    </select>
+    <select id="selectOneByUserName" resultType="com.dd.admin.system.user.domain.UserVo">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_user
+        where
+        USER_NAME = #{userName}
+    </select>
+</mapper>

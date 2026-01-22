@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.business.view.mapper.ViewMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.business.view.entity.View">
+        <id column="VIEW_ID" property="viewId" />
+        <result column="AUTHOR_ID" property="authorId" />
+        <result column="AUTHOR_NAME" property="authorName" />
+        <result column="NOTE_ID" property="noteId" />
+        <result column="NOTE_NAME" property="noteName" />
+        <result column="CREATE_TIME" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        VIEW_ID, AUTHOR_ID, AUTHOR_NAME, NOTE_ID, NOTE_NAME, CREATE_TIME
+    </sql>
+
+    <select id="selectViewPage" resultType="com.dd.admin.business.view.domain.ViewVo">
+        select
+        *
+        from business_view where 1 = 1
+    </select>
+
+    <select id="selectViewList" resultType="com.dd.admin.business.view.domain.ViewVo">
+        select
+        *
+        from business_view where 1 = 1
+    </select>
+</mapper>

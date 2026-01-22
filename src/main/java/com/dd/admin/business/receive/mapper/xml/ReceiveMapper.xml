@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.business.receive.mapper.ReceiveMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.business.receive.entity.Receive">
+        <id column="RECEIVE_ID" property="receiveId" />
+        <result column="AUTHOR_ID" property="authorId" />
+        <result column="AURHOR_NAME" property="aurhorName" />
+        <result column="NOTICE_ID" property="noticeId" />
+        <result column="NOTICE_TITLE" property="noticeTitle" />
+        <result column="DELETED" property="deleted" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="UPDATE_TIME" property="updateTime" />
+        <result column="RECEIVE_STATUS" property="receiveStatus" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        RECEIVE_ID, AUTHOR_ID, AURHOR_NAME, NOTICE_ID, NOTICE_TITLE, DELETED, CREATE_TIME, UPDATE_TIME, RECEIVE_STATUS
+    </sql>
+
+    <select id="selectReceivePage" resultType="com.dd.admin.business.receive.domain.ReceiveVo">
+        select
+        b.notice_title,b.notice_content,b.redirect_url, a.*
+        from business_receive a left join business_notice b on a.notice_id = b.notice_id where 1=1
+        <if test="receiveDto.authorId!= null and receiveDto.authorId!= ''">
+           and  a.author_id = #{receiveDto.authorId}
+        </if>
+        order by create_time desc
+    </select>
+
+    <select id="selectReceiveList" resultType="com.dd.admin.business.receive.domain.ReceiveVo">
+        select
+        *
+        from business_receive where 1 = 1
+    </select>
+    <select id="selectReceiveLast" resultType="com.dd.admin.business.receive.domain.ReceiveVo"
+            parameterType="java.lang.String">
+                select
+        b.notice_title,notice_content,redirect_url, a.*
+        from business_receive a left join business_notice b on a.notice_id = b.notice_id where 1=1
+        <if test="authorId!= null and authorId!= ''">
+            and a.author_id = #{authorId}
+        </if>
+        order by create_time desc limit 1
+    </select>
+</mapper>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.business.author.mapper.AuthorMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.business.author.entity.Author">
+        <id column="AUTHOR_ID" property="authorId" />
+        <result column="AUTHOR_NO" property="authorNo" />
+        <result column="AUTHOR_NAME" property="authorName" />
+        <result column="AVATAR_ID" property="avatarId" />
+        <result column="AVATAR_URL" property="avatarUrl" />
+        <result column="DESCRIPTION" property="description" />
+        <result column="SEX" property="sex" />
+        <result column="BIRTH" property="birth" />
+        <result column="JOB" property="job" />
+        <result column="AREA" property="area" />
+        <result column="SCHOOL" property="school" />
+        <result column="BACK_GROUND_ID" property="backGroundId" />
+        <result column="BACK_GROUND_URL" property="backGroundUrl" />
+        <result column="FOLLOW" property="follow" />
+        <result column="FANS" property="fans" />
+        <result column="UP_COUNT" property="upCount" />
+        <result column="STAR_COUNT" property="starCount" />
+        <result column="AUTHOR_STATUS" property="authorStatus" />
+        <result column="VERSION" property="version" />
+        <result column="DELETED" property="deleted" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="UPDATE_TIME" property="updateTime" />
+        <result column="IP_ADDRESS" property="ipAddress" />
+        <result column="IP_REAL_ADDRESS" property="ipRealAddress" />
+        <result column="REAL_NAME" property="realName" />
+        <result column="ID_CARD" property="idCard" />
+        <result column="PHONE_NUMBER" property="phoneNumber" />
+        <result column="BALANCE" property="balance" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        AUTHOR_ID, AUTHOR_NO, AUTHOR_NAME, AVATAR_ID, AVATAR_URL, DESCRIPTION, SEX, BIRTH, JOB, AREA, SCHOOL, BACK_GROUND_ID, BACK_GROUND_URL, FOLLOW, FANS, UP_COUNT, STAR_COUNT, AUTHOR_STATUS, VERSION, DELETED, CREATE_TIME, UPDATE_TIME, IP_ADDRESS, IP_REAL_ADDRESS, REAL_NAME, ID_CARD, PHONE_NUMBER, BALANCE
+    </sql>
+
+    <select id="selectAuthorPage" resultType="com.dd.admin.business.author.domain.AuthorVo">
+         SELECT
+                (
+                select count(1) from business_follow where follow_id = a.author_id
+                ) as follow,
+                (
+                select count(1) from business_follow where author_id = a.author_id
+                ) as fans,
+                (
+                select count(1) from business_up_notes where author_id = a.author_id
+                ) as upCount,
+                (
+                select count(1) from business_star_notes where author_id = a.author_id
+                ) as starCount,a.*
+                FROM
+        business_author a where 1=1
+        <if test="authorDto.keyword != null and authorDto.keyword != ''">
+            and (a.AUTHOR_NAME like CONCAT('%', #{authorDto.keyword}, '%')
+                 or a.PHONE_NUMBER like CONCAT('%', #{authorDto.keyword}, '%'))
+        </if>
+        ORDER BY a.create_time desc
+    </select>
+
+    <select id="selectAuthorList" resultType="com.dd.admin.business.author.domain.AuthorVo">
+        select
+        *,
+        (
+        SELECT
+        count(1)
+        FROM
+        business_follow
+        WHERE
+        follow_id = a.AUTHOR_ID
+        AND author_id = #{authorDto.authorId}
+        ) AS isFollowMe
+        ,
+        (
+        SELECT
+        count(1)
+        FROM
+        business_follow
+        WHERE
+        follow_id = #{authorDto.authorId}
+        AND author_id = a.AUTHOR_ID
+        ) AS isFollow
+        from business_author a where 1 = 1
+        <if test="authorDto.keyword != null and authorDto.keyword != ''">
+            and (a.AUTHOR_NAME like CONCAT('%', #{authorDto.keyword}, '%')
+            or a.PHONE_NUMBER like CONCAT('%', #{authorDto.keyword}, '%'))
+        </if>
+    </select>
+
+    <select id="selectAuthorUpAndStarTotalCount" resultType="java.lang.Long">
+
+        SELECT IFNULL(SUM(subquery_counts.count_value), 0)  AS total_count
+        FROM (
+            SELECT COUNT(*) AS count_value FROM business_up_notes WHERE AUTHOR_ID = #{authorId}
+            UNION ALL
+            SELECT COUNT(*) AS count_value FROM business_star_notes WHERE AUTHOR_ID = #{authorId}
+            UNION ALL
+            SELECT COUNT(*) AS count_value FROM business_up_replys WHERE AUTHOR_ID = #{authorId}
+        ) AS subquery_counts;
+    </select>
+    <select id="selectAuthorByPhoneNumber" resultType="com.dd.admin.business.author.entity.Author"
+            parameterType="java.lang.String">
+        select * from business_author where phone_number = #{phoneNumber}
+    </select>
+</mapper>

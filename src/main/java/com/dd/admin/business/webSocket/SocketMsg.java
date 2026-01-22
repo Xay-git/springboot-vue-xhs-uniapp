@@ -1,0 +1,1 @@
+package com.dd.admin.business.webSocket;import lombok.Data;import lombok.experimental.Accessors;@Data@Accessors(chain = true)public class SocketMsg {    //握手类型    private String handlerType;    private Object body;    public SocketMsg(String handlerType, Object body) {        super();        this.handlerType = handlerType;        this.body = body;    }}

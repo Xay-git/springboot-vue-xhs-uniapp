@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.system.role.mapper.RoleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.system.role.entity.Role">
+        <id column="ROLE_ID" property="roleId" />
+        <result column="ROLE_NAME" property="roleName" />
+        <result column="REMARK" property="remark" />
+        <result column="DEPT_ID" property="deptId" />
+        <result column="DEPT_NAME" property="deptName" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="CREATE_NAME" property="createName" />
+        <result column="CREATE_ID" property="createId" />
+        <result column="UPDATE_TIME" property="updateTime" />
+        <result column="UPDATE_NAME" property="updateName" />
+        <result column="UPDATE_ID" property="updateId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ROLE_ID, ROLE_NAME, REMARK, DEPT_ID, DEPT_NAME, CREATE_TIME, CREATE_NAME, CREATE_ID, UPDATE_TIME, UPDATE_NAME, UPDATE_ID
+    </sql>
+
+    <select id="selectRolePage" resultType="com.dd.admin.system.role.domain.RoleVo">
+        select
+        *
+        from sys_role where 1 = 1
+    </select>
+
+    <select id="selectRoleList" resultType="com.dd.admin.system.role.domain.RoleVo">
+        select
+        *
+        from sys_role where 1 = 1
+    </select>
+</mapper>

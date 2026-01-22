@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.business.operationLog.mapper.OperationLogMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.business.operationLog.entity.OperationLog">
+        <result column="OPER_ID" property="operId" />
+        <result column="OPER_MODULE" property="operModule" />
+        <result column="OPER_TYPE" property="operType" />
+        <result column="OPER_DESC" property="operDesc" />
+        <result column="OPER_METHOD" property="operMethod" />
+        <result column="OPRR_REQUEST_PARAM" property="oprrRequestParam" />
+        <result column="OPER_RESPONSE_PARAM" property="operResponseParam" />
+        <result column="OPER_USER_ID" property="operUserId" />
+        <result column="OPER_USER_NAME" property="operUserName" />
+        <result column="OPER_IP" property="operIp" />
+        <result column="OPER_URL" property="operUrl" />
+        <result column="OPER_DEPT_ID" property="operDeptId" />
+        <result column="OPER_DEPT_NAME" property="operDeptName" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="MEMBER_ID" property="memberId" />
+        <result column="MEMBER_NAME" property="memberName" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        OPER_ID, OPER_MODULE, OPER_TYPE, OPER_DESC, OPER_METHOD, OPRR_REQUEST_PARAM, OPER_RESPONSE_PARAM, OPER_USER_ID, OPER_USER_NAME, OPER_IP, OPER_URL, OPER_DEPT_ID, OPER_DEPT_NAME, CREATE_TIME, MEMBER_ID, MEMBER_NAME
+    </sql>
+
+    <select id="selectOperationLogPage" resultType="com.dd.admin.business.operationLog.domain.OperationLogVo">
+        select
+        OPER_ID,OPER_MODULE,OPER_TYPE,OPER_DESC,OPER_METHOD,OPER_USER_ID,OPER_USER_NAME,OPER_IP,OPER_URL,OPER_DEPT_ID,OPER_DEPT_NAME,CREATE_TIME,MEMBER_ID,MEMBER_NAME,OPER_IP_ADDRESS,MESSAGE_STATUS
+        from business_operation_log where 1 = 1
+        order by create_time desc
+    </select>
+
+    <select id="selectOperationLogList" resultType="com.dd.admin.business.operationLog.domain.OperationLogVo">
+        select
+        *
+        from business_operation_log where 1 = 1
+    </select>
+</mapper>

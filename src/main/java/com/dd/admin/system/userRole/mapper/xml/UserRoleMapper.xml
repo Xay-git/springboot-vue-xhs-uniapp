@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.system.userRole.mapper.UserRoleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.system.userRole.entity.UserRole">
+        <id column="ID" property="id" />
+        <result column="USER_ID" property="userId" />
+        <result column="ROLE_ID" property="roleId" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="CREATE_NAME" property="createName" />
+        <result column="CREATE_ID" property="createId" />
+        <result column="UPDATE_TIME" property="updateTime" />
+        <result column="UPDATE_NAME" property="updateName" />
+        <result column="UPDATE_ID" property="updateId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ID, USER_ID, ROLE_ID, CREATE_TIME, CREATE_NAME, CREATE_ID, UPDATE_TIME, UPDATE_NAME, UPDATE_ID
+    </sql>
+    <delete id="deleteUserRoleByUserId">
+        delete from sys_user_role
+        where
+            USER_ID = #{userId}
+    </delete>
+
+    <select id="selectUserRolePage" resultType="com.dd.admin.system.userRole.domain.UserRoleVo">
+        select
+        *
+        from sys_user_role where 1 = 1
+    </select>
+
+    <select id="selectUserRoleList" resultType="com.dd.admin.system.userRole.domain.UserRoleVo">
+        select
+        *
+        from sys_user_role where 1 = 1
+    </select>
+    <select id="selectAllByUserId" resultType="java.lang.String">
+        select
+        ROLE_ID
+        from sys_user_role where user_id = #{userId}
+    </select>
+</mapper>

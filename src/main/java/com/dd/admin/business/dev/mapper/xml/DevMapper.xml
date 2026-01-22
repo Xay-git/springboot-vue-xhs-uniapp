@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.business.dev.mapper.DevMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.business.dev.entity.Dev">
+        <id column="DEV_ID" property="devId" />
+        <result column="SERVER_NAME" property="serverName" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="IP_ADDRESS" property="ipAddress" />
+        <result column="IP_REAL_ADDRESS" property="ipRealAddress" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        DEV_ID, SERVER_NAME, CREATE_TIME, IP_ADDRESS, IP_REAL_ADDRESS
+    </sql>
+
+    <select id="selectDevPage" resultType="com.dd.admin.business.dev.domain.DevVo">
+        select
+        *
+        from business_dev where 1 = 1
+    </select>
+
+    <select id="selectDevList" resultType="com.dd.admin.business.dev.domain.DevVo">
+        select
+        *
+        from business_dev where 1 = 1
+    </select>
+</mapper>

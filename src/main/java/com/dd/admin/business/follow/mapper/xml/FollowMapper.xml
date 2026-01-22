@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.business.follow.mapper.FollowMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.business.follow.entity.Follow">
+        <id column="ID" property="id" />
+        <result column="AUTHOR_ID" property="authorId" />
+        <result column="AUTHOR_NAME" property="authorName" />
+        <result column="FOLLOW_ID" property="followId" />
+        <result column="FOLLOW_NAME" property="followName" />
+        <result column="CREATE_TIME" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ID, AUTHOR_ID, AUTHOR_NAME, FOLLOW_ID, FOLLOW_NAME, CREATE_TIME
+    </sql>
+
+    <select id="selectFollowPage" resultType="com.dd.admin.business.follow.domain.FollowVo">
+        select
+        *
+        from business_follow where 1 = 1
+    </select>
+
+
+
+    <select id="selectFollowList" resultType="com.dd.admin.business.follow.domain.FollowVo">
+        select
+        *
+        from business_follow where 1 = 1
+        <if test="followDto.authorId != null and followDto.authorId != ''">
+            and AUTHOR_ID = #{followDto.authorId}
+        </if>
+        <if test="followDto.followId != null and followDto.followId != ''">
+            and FOLLOW_ID = #{followDto.followId}
+        </if>
+        order by create_time desc
+    </select>
+
+    <select id="selectMyFollowList" resultType="com.dd.admin.business.follow.domain.FollowVo">
+        SELECT
+            b.AUTHOR_ID,
+            b.AUTHOR_NAME,
+            b.AVATAR_URL,
+            b.DESCRIPTION,
+            (
+                SELECT
+                    count(1)
+                FROM
+                    business_follow
+                WHERE
+                    follow_id = b.AUTHOR_ID
+                AND author_id = #{targetId}
+            ) AS isFollowMe
+            ,
+            (
+                SELECT
+                    count(1)
+                FROM
+                    business_follow
+                WHERE
+                    follow_id = #{targetId}
+                AND author_id = b.AUTHOR_ID
+            ) AS isFollow
+        FROM
+            business_follow a
+        LEFT JOIN business_author b ON a.author_id = b.author_id
+        WHERE
+            1 = 1
+        AND a.FOLLOW_ID = #{authorId}
+        ORDER BY
+            a.create_time DESC
+    </select>
+
+
+<!--    查询关注我的所有列表信息 并在查询的时候设置子查询 查询当前用户作为关注者的时候有没有关注对方-->
+    <select id="selectFollowMeList" resultType="com.dd.admin.business.follow.domain.FollowVo">
+        SELECT
+            b.AUTHOR_ID,
+            b.AUTHOR_NAME,
+            b.AVATAR_URL,
+            b.DESCRIPTION,
+            (
+                SELECT
+                    count(1)
+                FROM
+                    business_follow
+                WHERE
+                    follow_id = #{targetId}
+                AND author_id = b.AUTHOR_ID
+            ) AS isFollow
+            ,
+            (
+                SELECT
+                    count(1)
+                FROM
+                    business_follow
+                WHERE
+                    follow_id = b.AUTHOR_ID
+                AND author_id = #{targetId}
+            ) AS isFollowMe
+        FROM
+            business_follow a
+        LEFT JOIN business_author b ON a.follow_id = b.author_id
+        WHERE
+            1 = 1
+        AND a.AUTHOR_ID = #{authorId}
+        ORDER BY
+            a.create_time DESC
+    </select>
+    <select id="getMyFriends" resultType="com.dd.admin.business.follow.domain.FollowVo"
+            parameterType="java.lang.String">
+        SELECT
+        b.AUTHOR_ID,
+        b.AUTHOR_NAME,
+        b.AVATAR_URL,
+        b.DESCRIPTION
+    FROM
+        business_author b
+           LEFT JOIN
+        -- 通过business_follow表自连接，找出既存在A关注B，又存在B关注A的情况
+        business_follow f1 ON b.AUTHOR_ID = f1.author_id
+           LEFT JOIN
+        business_follow f2 ON b.AUTHOR_ID = f2.follow_id
+            WHERE f1.follow_id = #{authorId}
+            AND f2.author_id = #{authorId}
+            order by f1.create_time desc
+    </select>
+
+</mapper>

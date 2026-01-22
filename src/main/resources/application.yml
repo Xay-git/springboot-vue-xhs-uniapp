@@ -1,0 +1,120 @@
+spring:
+  servlet:
+    multipart:
+      enabled: true #默认支持文件上传
+      max-file-size: 500MB
+      max-request-size: 500MB
+  redis:
+    # Redis数据库索引（默认为0）
+    database: 1
+    # Redis服务器地址
+    host: localhost
+    password:
+  datasource:
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+    url: jdbc:p6spy:mysql://127.0.0.1:3306/ddxhs?useSSL=false&autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8
+    username: root
+    password: admin123
+
+  jackson:
+    #配置日期返回格式
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+dd:
+  uploadPath: C:/ddStore/
+  # 生产环境配置域名，如 example.com，本地开发环境留空
+  domain:
+  # 是否使用HTTPS，生产环境设为true
+  use-https: false
+  # 文件存储模式：local(本地存储) 或 minio(MinIO对象存储)
+  storage-mode: local
+
+# MinIO配置
+minio:
+  # MinIO服务地址
+  endpoint: http://192.168.10.105:9000
+  # 访问密钥
+  accessKey: admin
+  # 秘密密钥
+  secretKey: password
+  # 存储桶名称
+  bucketName: book
+
+knife4j:
+  enable: true
+#here is the importance configs of JWT
+jwt:
+  header: Authorization #请求头权限标识
+  expiration: 2592000 #7天 604800 30天2,592,000  60*60*24*365
+  secret: security
+  # 配置不需要认证的接口
+  ignores:
+    # 需要过滤的 post 请求
+    post:
+      - "/admin/login/**"
+      - "/appUpload/**"
+    # 需要过滤的 get 请求
+    get:
+      - "/favicon.ico"
+    # 需要过滤的请求，不限方法
+    pattern:
+      - "/api/**"
+      - "/dev/**"
+      - "/upload/**"
+      - "/appUpload/**"
+      - "/doc.html"
+      - "/swagger-resources/**"
+      - "/v2/api-docs/**"
+      - "/webjars/**"
+      - "/**.txt"
+#================================================= mybatis-plus start =================================================
+mybatis-plus:
+  #配置文件
+  mapper-locations: classpath*:com/dd/admin/system/*/mapper/xml/*Mapper.xml,com/dd/admin/business/*/mapper/xml/*Mapper.xml
+  configuration:
+    log-impl:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#================================================= mybatis-plus end ===================================================
+
+server:
+  port: 8081
+
+tio:
+  websocket:
+    server:
+      port: 9326
+      heartbeat-timeout: 20000
+    # 集群配置 默认关闭
+    cluster:
+      enabled: false
+      # 集群是通过redis的Pub/Sub实现，所以需要配置Redis
+      redis:
+        ip: 127.0.0.1
+        port: 6379
+      all: true
+      group: true
+      ip: true
+      user: true
+
+# Sa-Token配置
+sa-token:
+  # token名称 (Same-Token substituido)
+  token-name: satoken
+  # API文档页面显示地址
+  doc-url: ${knife4j.production:false}
+
+# 阿里云短信服务
+aliyun:
+  sms:
+    # 是否启用真实短信发送
+    enabled: false
+    # 阿里云账号的accessKeyId
+    access-key-id:
+    # 阿里云账号的accessKeySecret
+    access-key-secret:
+    # 短信签名名称
+    sign-name:
+    # 短信模板CODE
+    template-code:
+    # 短信验证码有效期（分钟）
+    expire-minutes: 1

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.system.setting.mapper.SystemSettingMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.system.setting.entity.SystemSetting">
+        <id column="SETTING_ID" property="settingId" />
+        <result column="SETTING_KEY" property="settingKey" />
+        <result column="SETTING_VALUE" property="settingValue" />
+        <result column="SETTING_DESC" property="settingDesc" />
+        <result column="SETTING_TYPE" property="settingType" />
+        <result column="IS_ENABLED" property="isEnabled" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="CREATE_NAME" property="createName" />
+        <result column="CREATE_ID" property="createId" />
+        <result column="UPDATE_TIME" property="updateTime" />
+        <result column="UPDATE_NAME" property="updateName" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        SETTING_ID, SETTING_KEY, SETTING_VALUE, SETTING_DESC, SETTING_TYPE, IS_ENABLED,
+        CREATE_TIME, CREATE_NAME, CREATE_ID, UPDATE_TIME, UPDATE_NAME
+    </sql>
+
+    <select id="selectSystemSettingPage" resultType="com.dd.admin.system.setting.domain.SystemSettingVo">
+        select
+        *
+        from system_setting where 1 = 1
+        <if test="systemSettingDto.settingKey != null and systemSettingDto.settingKey != ''">
+            and SETTING_KEY like concat('%', #{systemSettingDto.settingKey}, '%')
+        </if>
+        <if test="systemSettingDto.settingType != null and systemSettingDto.settingType != ''">
+            and SETTING_TYPE = #{systemSettingDto.settingType}
+        </if>
+        <if test="systemSettingDto.isEnabled != null">
+            and IS_ENABLED = #{systemSettingDto.isEnabled}
+        </if>
+        order by CREATE_TIME desc
+    </select>
+
+    <select id="selectSystemSettingList" resultType="com.dd.admin.system.setting.domain.SystemSettingVo">
+        select
+        *
+        from system_setting where 1 = 1
+        <if test="systemSettingDto.settingKey != null and systemSettingDto.settingKey != ''">
+            and SETTING_KEY like concat('%', #{systemSettingDto.settingKey}, '%')
+        </if>
+        <if test="systemSettingDto.settingType != null and systemSettingDto.settingType != ''">
+            and SETTING_TYPE = #{systemSettingDto.settingType}
+        </if>
+        <if test="systemSettingDto.isEnabled != null">
+            and IS_ENABLED = #{systemSettingDto.isEnabled}
+        </if>
+        order by CREATE_TIME desc
+    </select>
+</mapper>

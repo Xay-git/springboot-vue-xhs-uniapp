@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.business.product.mapper.ProductMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.business.product.entity.Product">
+        <id column="PRODUCT_ID" property="productId" />
+        <result column="PRODUCT_NAME" property="productName" />
+        <result column="PRODUCT_NO" property="productNo" />
+        <result column="CATEGORY_ID" property="categoryId" />
+        <result column="PRODUCT_PRICE" property="productPrice" />
+        <result column="PRODUCT_ORIGINAL_PRICE" property="productOriginalPrice" />
+        <result column="SHIPPING_FEE" property="shippingFee" />
+        <result column="PRODUCT_DESC" property="productDesc" />
+        <result column="PRODUCT_STOCK" property="productStock" />
+        <result column="PRODUCT_STATUS" property="productStatus" />
+        <result column="FIRST_PICTURE_ID" property="firstPictureId" />
+        <result column="FIRST_PICTURE_URL" property="firstPictureUrl" />
+        <result column="PRODUCT_VIEWS" property="productViews" />
+        <result column="SALES_COUNT" property="salesCount" />
+        <result column="VERSION" property="version" />
+        <result column="DELETED" property="deleted" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="UPDATE_TIME" property="updateTime" />
+    </resultMap>
+
+    <!-- ProductVo查询映射结果 -->
+    <resultMap id="ProductVoResultMap" type="com.dd.admin.business.product.vo.ProductVo">
+        <id column="PRODUCT_ID" property="productId" />
+        <result column="PRODUCT_NAME" property="productName" />
+        <result column="PRODUCT_NO" property="productNo" />
+        <result column="CATEGORY_ID" property="categoryId" />
+        <result column="CATEGORY_NAME" property="categoryName" />
+        <result column="PRODUCT_PRICE" property="productPrice" />
+        <result column="PRODUCT_ORIGINAL_PRICE" property="productOriginalPrice" />
+        <result column="SHIPPING_FEE" property="shippingFee" />
+        <result column="PRODUCT_DESC" property="productDesc" />
+        <result column="PRODUCT_STOCK" property="productStock" />
+        <result column="PRODUCT_STATUS" property="productStatus" />
+        <result column="MAIN_IMAGE_ID" property="mainImageId" />
+        <result column="MAIN_IMAGE_URL" property="mainImageUrl" />
+        <result column="FIRST_PICTURE_ID" property="firstPictureId" />
+        <result column="FIRST_PICTURE_URL" property="firstPictureUrl" />
+        <result column="PRODUCT_SALES" property="productSales" />
+        <result column="SORT" property="sort" />
+        <result column="IS_RECOMMEND" property="isRecommend" />
+        <result column="IS_HOT" property="isHot" />
+        <result column="IS_NEW" property="isNew" />
+        <result column="PRODUCT_TAGS" property="productTags" />
+        <result column="PRODUCT_DETAIL" property="productDetail" />
+        <result column="PRODUCT_SPEC" property="productSpec" />
+        <result column="PRODUCT_PARAMS" property="productParams" />
+        <result column="VERSION" property="version" />
+        <result column="DELETED" property="deleted" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="UPDATE_TIME" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        PRODUCT_ID, PRODUCT_NAME, PRODUCT_NO, CATEGORY_ID, PRODUCT_PRICE, PRODUCT_ORIGINAL_PRICE, 
+        SHIPPING_FEE, PRODUCT_DESC, PRODUCT_STOCK, PRODUCT_STATUS, FIRST_PICTURE_ID, FIRST_PICTURE_URL, 
+        PRODUCT_VIEWS, SALES_COUNT, VERSION, DELETED, CREATE_TIME, UPDATE_TIME
+    </sql>
+
+    <!-- 分页查询商品 -->
+    <select id="selectProductPage" resultMap="ProductVoResultMap">
+        SELECT 
+            p.PRODUCT_ID,
+            p.PRODUCT_NAME,
+            p.PRODUCT_NO,
+            p.CATEGORY_ID,
+            pc.CATEGORY_NAME,
+            p.PRODUCT_PRICE,
+            p.PRODUCT_ORIGINAL_PRICE,
+            p.SHIPPING_FEE,
+            p.PRODUCT_DESC,
+            p.PRODUCT_STOCK,
+            p.PRODUCT_STATUS,
+            p.FIRST_PICTURE_ID AS MAIN_IMAGE_ID,
+            p.FIRST_PICTURE_URL AS MAIN_IMAGE_URL,
+            p.FIRST_PICTURE_ID,
+            p.FIRST_PICTURE_URL,
+            p.SALES_COUNT AS PRODUCT_SALES,
+            0 AS SORT,
+            0 AS IS_RECOMMEND,
+            0 AS IS_HOT,
+            0 AS IS_NEW,
+            '' AS PRODUCT_TAGS,
+            '' AS PRODUCT_DETAIL,
+            '' AS PRODUCT_SPEC,
+            '' AS PRODUCT_PARAMS,
+            p.VERSION,
+            p.DELETED,
+            p.CREATE_TIME,
+            p.UPDATE_TIME
+        FROM business_product p
+        LEFT JOIN business_product_category pc ON p.CATEGORY_ID = pc.CATEGORY_ID
+        WHERE p.DELETED = 0
+        <if test="productDto != null">
+            <if test="productDto.productName != null and productDto.productName != ''">
+                AND p.PRODUCT_NAME LIKE CONCAT('%', #{productDto.productName}, '%')
+            </if>
+            <if test="productDto.categoryId != null and productDto.categoryId != ''">
+                AND p.CATEGORY_ID = #{productDto.categoryId}
+            </if>
+            <if test="productDto.productStatus != null">
+                AND p.PRODUCT_STATUS = #{productDto.productStatus}
+            </if>
+        </if>
+        ORDER BY p.CREATE_TIME DESC
+    </select>
+
+    <!-- 查询商品列表 -->
+    <select id="selectProductList" resultMap="ProductVoResultMap">
+        SELECT 
+            p.PRODUCT_ID,
+            p.PRODUCT_NAME,
+            p.PRODUCT_NO,
+            p.CATEGORY_ID,
+            pc.CATEGORY_NAME,
+            p.PRODUCT_PRICE,
+            p.PRODUCT_ORIGINAL_PRICE,
+            p.SHIPPING_FEE,
+            p.PRODUCT_DESC,
+            p.PRODUCT_STOCK,
+            p.PRODUCT_STATUS,
+            p.FIRST_PICTURE_ID AS MAIN_IMAGE_ID,
+            p.FIRST_PICTURE_URL AS MAIN_IMAGE_URL,
+            p.FIRST_PICTURE_ID,
+            p.FIRST_PICTURE_URL,
+            p.SALES_COUNT AS PRODUCT_SALES,
+            0 AS SORT,
+            0 AS IS_RECOMMEND,
+            0 AS IS_HOT,
+            0 AS IS_NEW,
+            '' AS PRODUCT_TAGS,
+            '' AS PRODUCT_DETAIL,
+            '' AS PRODUCT_SPEC,
+            '' AS PRODUCT_PARAMS,
+            p.VERSION,
+            p.DELETED,
+            p.CREATE_TIME,
+            p.UPDATE_TIME
+        FROM business_product p
+        LEFT JOIN business_product_category pc ON p.CATEGORY_ID = pc.CATEGORY_ID
+        WHERE p.DELETED = 0
+        <if test="productDto != null">
+            <if test="productDto.productName != null and productDto.productName != ''">
+                AND p.PRODUCT_NAME LIKE CONCAT('%', #{productDto.productName}, '%')
+            </if>
+            <if test="productDto.categoryId != null and productDto.categoryId != ''">
+                AND p.CATEGORY_ID = #{productDto.categoryId}
+            </if>
+            <if test="productDto.productStatus != null">
+                AND p.PRODUCT_STATUS = #{productDto.productStatus}
+            </if>
+        </if>
+        ORDER BY p.CREATE_TIME DESC
+    </select>
+
+
+
+</mapper>

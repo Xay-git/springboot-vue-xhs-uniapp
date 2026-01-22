@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.business.upReplys.mapper.UpReplysMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.business.upReplys.entity.UpReplys">
+        <id column="REPLY_UP_ID" property="replyUpId" />
+        <result column="REPLY_ID" property="replyId" />
+        <result column="REPLY_CONTENT" property="replyContent" />
+        <result column="AUTHOR_ID" property="authorId" />
+        <result column="AUTHOR_NAME" property="authorName" />
+        <result column="FOLLOW_ID" property="followId" />
+        <result column="FOLLOW_NAME" property="followName" />
+        <result column="CREATE_TIME" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        REPLY_UP_ID, REPLY_ID, REPLY_CONTENT, AUTHOR_ID, AUTHOR_NAME, FOLLOW_ID, FOLLOW_NAME, CREATE_TIME
+    </sql>
+
+    <select id="selectUpReplysPage" resultType="com.dd.admin.business.upReplys.domain.UpReplysVo">
+        select
+        *
+        from business_up_replys where 1 = 1
+    </select>
+
+    <select id="selectUpReplysList" resultType="com.dd.admin.business.upReplys.domain.UpReplysVo">
+        select
+        *
+        from business_up_replys where 1 = 1
+    </select>
+</mapper>

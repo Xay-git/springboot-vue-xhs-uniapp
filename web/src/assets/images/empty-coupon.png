@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+  <rect width="120" height="120" fill="#fafafa"/>
+  <!-- 优惠券主体 -->
+  <rect x="25" y="40" width="70" height="40" fill="#f8f8f8" stroke="#ddd" stroke-width="2" rx="5"/>
+  <!-- 优惠券左侧圆形缺口 -->
+  <circle cx="25" cy="60" r="8" fill="#fafafa" stroke="#ddd" stroke-width="2"/>
+  <!-- 优惠券右侧圆形缺口 -->
+  <circle cx="95" cy="60" r="8" fill="#fafafa" stroke="#ddd" stroke-width="2"/>
+  <!-- 优惠券虚线 -->
+  <line x1="35" y1="60" x2="85" y2="60" stroke="#ddd" stroke-width="1" stroke-dasharray="2,2"/>
+  <!-- 优惠券文字区域 -->
+  <text x="45" y="55" font-family="Arial" font-size="8" fill="#ccc">￥</text>
+  <text x="55" y="55" font-family="Arial" font-size="10" fill="#ccc">优惠券</text>
+  <text x="60" y="95" text-anchor="middle" font-family="Arial" font-size="10" fill="#999">暂无优惠券</text>
+</svg>

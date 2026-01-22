@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.business.note.mapper.NoteMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.business.note.entity.Note">
+        <id column="NOTE_ID" property="noteId" />
+        <result column="NOTE_TITLE" property="noteTitle" />
+        <result column="NOTE_CONTENT" property="noteContent" />
+        <result column="NOTE_CATEGORY" property="noteCategory" />
+        <result column="NOTE_CATEGORY_NAME" property="noteCategoryName" />
+        <result column="NOTE_TYPE" property="noteType" />
+        <result column="AUTHOR_ID" property="authorId" />
+        <result column="AUTHOR_NAME" property="authorName" />
+        <result column="FIRST_PICTURE" property="firstPicture" />
+        <result column="VERSION" property="version" />
+        <result column="DELETED" property="deleted" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="UPDATE_TIME" property="updateTime" />
+        <result column="IP_ADDRESS" property="ipAddress" />
+        <result column="IP_REAL_ADDRESS" property="ipRealAddress" />
+        <result column="PRODUCT_ID" property="productId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        NOTE_ID, NOTE_TITLE, NOTE_CONTENT, NOTE_CATEGORY, NOTE_CATEGORY_NAME, NOTE_TYPE, AUTHOR_ID, AUTHOR_AVATAR, AUTHOR_NAME, FIRST_PICTURE, VERSION, DELETED, CREATE_TIME, UPDATE_TIME, IP_ADDRESS, IP_REAL_ADDRESS, UP_COUNT, STAR_COUNT, PRODUCT_ID
+    </sql>
+
+    <select id="selectNotePage" resultType="com.dd.admin.business.note.domain.NoteVo">
+        SELECT
+        (
+        SELECT
+        IFNULL(COUNT(e.note_id), 0) + IFNULL(a.INIT_STAR_COUNT, 0)
+        FROM
+        business_star_notes e
+        WHERE
+        e.note_id = a.note_id
+        ) AS starCount,
+        (
+        SELECT
+        IFNULL(COUNT(d.note_id), 0) + IFNULL(a.INIT_UP_COUNT, 0)
+        FROM
+        business_up_notes d
+        WHERE
+        d.note_id = a.note_id
+        ) AS upCount,
+        d.AVATAR_URL AS authorAvatar,
+        a.*,
+        d.AUTHOR_NAME AS authorName
+        <if test="noteDto.followId!= null and noteDto.followId!= ''">
+            ,CASE WHEN EXISTS (
+            SELECT 1
+            FROM business_star_notes sub_b
+            WHERE sub_b.note_id = a.note_id
+            AND sub_b.follow_id = #{noteDto.followId}
+            ) THEN true ELSE false END AS isStar
+            ,CASE WHEN EXISTS (
+            SELECT 1
+            FROM business_up_notes sub_c
+            WHERE sub_c.note_id = a.note_id
+            AND sub_c.follow_id = #{noteDto.followId}
+            ) THEN true ELSE false END AS isUp
+        </if>
+        FROM
+        business_note a
+        LEFT JOIN
+        business_star_notes b ON a.note_id = b.note_id
+        LEFT JOIN
+        business_up_notes c ON a.note_id = c.note_id
+        LEFT JOIN
+        business_author d ON a.author_id = d.author_id
+        WHERE
+        a.deleted = 0
+        <if test="noteDto.noteStatus!= null ">
+            AND a.note_status = #{noteDto.noteStatus}
+            and a.create_time &lt;= now()
+        </if>
+
+
+        <if test="noteDto.keyword != null and noteDto.keyword != ''">
+            and (a.NOTE_TITLE like CONCAT('%', #{noteDto.keyword}, '%')
+            or a.NOTE_CONTENT like CONCAT('%', #{noteDto.keyword}, '%'))
+        </if>
+
+        <if test="noteDto.authorId!= null and noteDto.authorId!= ''">
+            AND a.AUTHOR_ID = #{noteDto.authorId}
+        </if>
+
+        <if test="noteDto.noteCategory!= null and noteDto.noteCategory!= ''">
+            AND a.NOTE_CATEGORY = #{noteDto.noteCategory}
+        </if>
+        <if test="noteDto.noteType!= null and noteDto.noteType!= ''">
+            AND a.NOTE_TYPE= #{noteDto.noteType}
+        </if>
+        <if test="noteDto.authorIds!= null and noteDto.authorIds!= ''">
+            AND a.AUTHOR_ID IN (${noteDto.authorIds})
+        </if>
+        <if test="noteDto.ipRealAddress!= null and noteDto.ipRealAddress!= ''">
+            AND a.IP_REAL_ADDRESS = #{noteDto.ipRealAddress}
+        </if>
+        <if test="noteDto.myStarById!= null and noteDto.myStarById!= ''">
+            AND b.follow_id = #{noteDto.myStarById}
+        </if>
+        <if test="noteDto.myUpById!= null and noteDto.myUpById!= ''">
+            AND c.follow_id = #{noteDto.myUpById}
+        </if>
+        GROUP BY
+        a.note_id
+        <choose>
+            <when test="noteDto.myUpById!= null and noteDto.myUpById!= ''">
+                ORDER BY
+                c.create_time DESC
+            </when>
+            <when test="noteDto.myStarById!= null and noteDto.myStarById!= ''">
+                ORDER BY
+                b.create_time DESC
+            </when>
+            <otherwise>
+                ORDER BY
+                a.create_time DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="selectNoteList" resultType="com.dd.admin.business.note.domain.NoteVo">
+        select
+        *
+        from business_note where 1 = 1
+    </select>
+
+    <select id="selectMineUpNotes" resultType="com.dd.admin.business.note.domain.NoteVo">
+        select * from business_note a left join business_up_notes b on a.note_id = b.note_id
+        where b.follow_id = #{followId}
+        order by b.create_time desc
+    </select>
+
+    <select id="selectMineStarNotes" resultType="com.dd.admin.business.note.domain.NoteVo">
+       select * from business_note a left join business_star_notes b on a.note_id = b.note_id
+        where b.follow_id = #{followId}
+        order by b.create_time desc
+    </select>
+
+    <select id="selectNoteDetail" resultType="com.dd.admin.business.note.domain.NoteVo"
+            parameterType="java.lang.String">
+        SELECT
+        (
+        SELECT
+        IFNULL(COUNT(e.note_id), 0) + IFNULL(a.INIT_STAR_COUNT, 0)
+        FROM
+        business_star_notes e
+        WHERE
+        e.note_id = a.note_id
+        ) AS starCount,
+        (
+        SELECT
+        IFNULL(COUNT(d.note_id), 0) + IFNULL(a.INIT_UP_COUNT, 0)
+        FROM
+        business_up_notes d
+        WHERE
+        d.note_id = a.note_id
+        ) AS upCount,
+        d.AVATAR_URL AS authorAvatar,
+        a.*,
+        d.AUTHOR_NAME AS authorName,
+        p.PRODUCT_NAME AS productName,
+        p.PRODUCT_PRICE AS productPrice,
+        p.FIRST_PICTURE_URL AS productImage
+        -- 使用 CASE WHEN 语句判断是否存在当前用户（通过传入的 followId）对笔记的收藏记录，有则为 true，否则为 false
+        <if test="noteDto.followId != null and noteDto.followId != ''">
+            ,CASE WHEN EXISTS (
+            SELECT 1
+            FROM business_star_notes sub_b
+            WHERE sub_b.note_id = a.note_id
+            AND sub_b.follow_id = #{noteDto.followId}
+            ) THEN true ELSE false END AS isStar
+            ,CASE WHEN EXISTS (
+            SELECT 1
+            FROM business_up_notes sub_c
+            WHERE sub_c.note_id = a.note_id
+            AND sub_c.follow_id = #{noteDto.followId}
+            ) THEN true ELSE false END AS isUp
+        </if>
+        FROM
+        business_note a
+        LEFT JOIN
+        business_star_notes b ON a.note_id = b.note_id
+        LEFT JOIN
+        business_up_notes c ON a.note_id = c.note_id
+        LEFT JOIN
+        business_author d ON a.author_id = d.author_id
+        LEFT JOIN
+        business_product p ON a.product_id = p.product_id
+        where a.deleted = 0
+        <if test="noteDto.authorId != null and noteDto.authorId != ''">
+            and a.AUTHOR_ID = #{noteDto.authorId}
+        </if>
+        <if test="noteDto.noteId != null and noteDto.noteId != ''">
+            and a.NOTE_ID = #{noteDto.noteId}
+        </if>
+        <if test="noteDto.authorIds != null and noteDto.authorIds != ''">
+            and a.AUTHOR_ID in ${noteDto.authorIds}
+        </if>
+        <if test="noteDto.ipRealAddress != null and noteDto.ipRealAddress != ''">
+            and a.IP_REAL_ADDRESS = #{noteDto.ipRealAddress}
+        </if>
+        GROUP BY
+        a.note_id
+        ORDER BY
+        a.create_time DESC
+
+        limit 1
+    </select>
+
+    <select id="selectUpMeNotes" resultType="com.dd.admin.business.note.domain.UpMeVo">
+            SELECT
+                n.note_id,
+                n.note_title,
+                n.follow_id,
+                a.author_name followName,
+                a.AVATAR_URL,
+                n.create_time,
+                b.note_type,
+                b.FIRST_PICTURE, CASE
+            WHEN n.AUTHOR_ID IN (
+                SELECT
+                    AUTHOR_ID
+                FROM
+                    business_up_notes
+            ) THEN
+                1
+            WHEN n.AUTHOR_ID IN (
+                SELECT
+                    AUTHOR_ID
+                FROM
+                    business_star_notes
+            ) THEN
+                2
+            END AS `type`
+            FROM
+                (
+                    SELECT
+                        *, 'business_up_notes' AS source_table
+                    FROM
+                        business_up_notes
+                    WHERE
+                        AUTHOR_ID = #{authorId}
+                    UNION ALL
+                        SELECT
+                            *, 'business_star_notes' AS source_table
+                        FROM
+                            business_star_notes
+                        WHERE
+                            AUTHOR_ID = #{authorId}
+                ) AS n
+            LEFT JOIN business_author a ON n.follow_id = a.AUTHOR_ID
+            LEFT JOIN business_note b ON n.note_id = b.note_id
+            ORDER BY
+                n.create_time DESC
+    </select>
+    <select id="selectReplyMeNotes" resultType="com.dd.admin.business.note.domain.ReplayMeVo">
+            SELECT
+                r.reply_id,
+                r.note_id,
+                b.note_title,
+                a.author_id,
+                a.author_name,
+                a.AVATAR_URL,
+                r.create_time,
+                r.REPLAY_CONTENT,
+                b.note_type,
+                b.FIRST_PICTURE,
+                CASE
+                    WHEN r.TOP_PARENT_ID IS NULL THEN 1
+                    WHEN r.TOP_PARENT_ID IS NOT NULL THEN 2
+                END AS type,
+                  r.PARENT_ID,
+                  (
+                        SELECT
+                            REPLAY_CONTENT
+                        FROM
+                            business_reply
+                        WHERE
+                           REPLY_ID = r.PARENT_ID
+                        LIMIT 1
+                    ) AS parentReplayContent
+            FROM
+                business_reply r
+            LEFT JOIN business_author a ON r.author_id = a.AUTHOR_ID
+            LEFT JOIN business_note b ON r.note_id = b.note_id
+            where PARENT_AUTHOR_ID = #{authorId}
+            ORDER BY
+                r.create_time DESC
+    </select>
+
+    <select id="selectNoteListLike" resultType="com.dd.admin.business.note.domain.NoteVo">
+        SELECT
+            a.note_id,
+            a.note_title,
+            a.note_content,
+            a.note_category,
+            a.note_category_name,
+            a.note_type,
+            a.author_id,
+            a.author_name,
+            a.first_picture,
+            a.create_time,
+            a.update_time,
+            d.AVATAR_URL AS authorAvatar
+        FROM business_note a
+        LEFT JOIN business_author d ON a.author_id = d.author_id
+        WHERE a.deleted = 0
+        <if test="noteDto.noteTitle != null and noteDto.noteTitle != ''">
+            AND a.note_title like CONCAT('%', #{noteDto.noteTitle}, '%')
+        </if>
+        <if test="noteDto.noteContent != null and noteDto.noteContent != ''">
+            AND (a.note_title like CONCAT('%', #{noteDto.noteContent}, '%')
+                  OR a.note_content like CONCAT('%', #{noteDto.noteContent}, '%'))
+        </if>
+        ORDER BY a.create_time DESC
+    </select>
+    <select id="selectHotNoteList" resultType="com.dd.admin.business.note.domain.NoteVo">
+        SELECT
+            a.*,
+            (
+                SELECT
+                    count(1)
+                FROM
+                    business_view
+                WHERE
+                    note_id = a.note_id
+            ) viewCount
+        FROM
+            business_note a
+        GROUP BY
+            a.NOTE_TITLE
+        ORDER BY
+            viewCount DESC
+        LIMIT 10
+    </select>
+</mapper>

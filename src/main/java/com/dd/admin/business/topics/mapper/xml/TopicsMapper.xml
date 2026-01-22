@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.business.topics.mapper.TopicsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.business.topics.entity.Topics">
+        <id column="TOPIC_ID" property="topicId" />
+        <result column="TOPIC_NAME" property="topicName" />
+        <result column="TOPIC_DESCRIPTION" property="topicDescription" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="UPDATE_TIME" property="updateTime" />
+        <result column="TOPIC_POPULARITY" property="topicPopularity" />
+        <result column="NOTE_COUNT" property="noteCount" />
+        <result column="IS_HOT" property="isHot" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        TOPIC_ID, TOPIC_NAME, TOPIC_DESCRIPTION, CREATE_TIME, UPDATE_TIME, TOPIC_POPULARITY, NOTE_COUNT, IS_HOT
+    </sql>
+
+    <select id="selectTopicsPage" resultType="com.dd.admin.business.topics.domain.TopicsVo">
+        select
+        *
+        from business_topics where 1 = 1
+    </select>
+
+    <select id="selectTopicsList" resultType="com.dd.admin.business.topics.domain.TopicsVo">
+        select
+        *
+        from business_topics where 1 = 1
+    </select>
+</mapper>

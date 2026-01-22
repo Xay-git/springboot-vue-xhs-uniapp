@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.business.order.mapper.OrderMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.business.order.entity.Order">
+        <id column="order_id" property="orderId" />
+        <result column="order_no" property="orderNo" />
+        <result column="author_id" property="authorId" />
+        <result column="address_id" property="addressId" />
+        <result column="total_amount" property="totalAmount" />
+        <result column="order_status" property="orderStatus" />
+        <result column="pay_time" property="payTime" />
+        <result column="ship_time" property="shipTime" />
+        <result column="tracking_number" property="trackingNumber" />
+        <result column="complete_time" property="completeTime" />
+        <result column="cancel_time" property="cancelTime" />
+        <result column="cancel_reason" property="cancelReason" />
+        <result column="remark" property="remark" />
+        <result column="create_time" property="createTime" />
+        <result column="create_name" property="createName" />
+        <result column="create_id" property="createId" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_name" property="updateName" />
+        <result column="update_id" property="updateId" />
+        <result column="version" property="version" />
+        <result column="deleted" property="deleted" />
+        <result column="brand_id" property="brandId" />
+        <result column="brand_name" property="brandName" />
+        <result column="shop_id" property="shopId" />
+        <result column="shop_name" property="shopName" />
+    </resultMap>
+
+    <!-- OrderVo结果映射 -->
+    <resultMap id="OrderVoResultMap" type="com.dd.admin.business.order.vo.OrderVo">
+        <id column="order_id" property="orderId" />
+        <result column="order_no" property="orderNo" />
+        <result column="author_id" property="authorId" />
+        <result column="author_name" property="authorName" />
+        <result column="address_id" property="addressId" />
+        <result column="total_amount" property="totalAmount" />
+        <result column="goods_amount" property="goodsAmount" />
+        <result column="shipping_fee" property="shippingFee" />
+        <result column="order_status" property="orderStatus" />
+        <result column="pay_time" property="payTime" />
+        <result column="ship_time" property="shipTime" />
+        <result column="tracking_number" property="trackingNumber" />
+        <result column="complete_time" property="completeTime" />
+        <result column="cancel_time" property="cancelTime" />
+        <result column="cancel_reason" property="cancelReason" />
+        <result column="remark" property="remark" />
+        <result column="refund_amount" property="refundAmount" />
+        <result column="refund_reason" property="refundReason" />
+        <result column="refund_apply_time" property="refundApplyTime" />
+        <result column="refund_process_time" property="refundProcessTime" />
+        <result column="refund_process_remark" property="refundProcessRemark" />
+        <result column="refund_reject_reason" property="refundRejectReason" />
+        <result column="return_tracking_number" property="returnTrackingNumber" />
+        <result column="create_time" property="createTime" />
+        <result column="receiver_name" property="receiverName" />
+        <result column="receiver_phone" property="receiverPhone" />
+        <result column="receiver_address" property="receiverAddress" />
+        <collection property="items" ofType="com.dd.admin.business.order.entity.OrderItem">
+            <id column="item_id" property="itemId" />
+            <result column="product_id" property="productId" />
+            <result column="product_name" property="productName" />
+            <result column="product_price" property="productPrice" />
+            <result column="product_image" property="productImage" />
+            <result column="quantity" property="quantity" />
+        </collection>
+    </resultMap>
+
+    <!-- 订单分页列表 -->
+    <select id="selectOrderPage" resultMap="OrderVoResultMap">
+        SELECT 
+            o.order_id,
+            o.order_no,
+            o.author_id,
+            au.author_name,
+            o.address_id,
+            o.total_amount,
+            o.goods_amount,
+            o.shipping_fee,
+            o.order_status,
+            o.pay_time,
+            o.ship_time,
+            o.tracking_number,
+            o.complete_time,
+            o.cancel_time,
+            o.cancel_reason,
+            o.remark,
+            o.refund_amount,
+            o.refund_reason,
+            o.refund_apply_time,
+            o.refund_process_time,
+            o.refund_process_remark,
+            o.refund_reject_reason,
+            o.return_tracking_number,
+            o.create_time,
+            a.receiver_name,
+            a.receiver_phone,
+            CONCAT(a.province, a.city, a.district, a.detail_address) as receiver_address,
+            oi.item_id,
+            oi.product_id,
+            oi.product_name,
+            oi.product_price,
+            COALESCE(p.first_picture_url, oi.product_image, '/static/img/demo1.jpg') as product_image,
+            oi.quantity
+        FROM business_order o
+        LEFT JOIN business_address a ON o.address_id = a.address_id
+        LEFT JOIN business_author au ON o.author_id = au.author_id
+        LEFT JOIN business_order_item oi ON o.order_id = oi.order_id
+        LEFT JOIN business_product p ON oi.product_id = p.product_id
+        WHERE o.deleted = 0
+        <if test="orderDto.authorId != null and orderDto.authorId != ''">
+            AND o.author_id = #{orderDto.authorId}
+        </if>
+        <if test="orderDto.orderStatus != null">
+            AND o.order_status = #{orderDto.orderStatus}
+        </if>
+        ORDER BY o.create_time DESC
+    </select>
+
+    <!-- 订单列表 -->
+    <select id="selectOrderList" resultMap="OrderVoResultMap">
+        SELECT 
+            o.order_id,
+            o.order_no,
+            o.author_id,
+            au.author_name,
+            o.address_id,
+            o.total_amount,
+            o.goods_amount,
+            o.shipping_fee,
+            o.order_status,
+            o.pay_time,
+            o.ship_time,
+            o.tracking_number,
+            o.complete_time,
+            o.cancel_time,
+            o.cancel_reason,
+            o.remark,
+            o.refund_amount,
+            o.refund_reason,
+            o.refund_apply_time,
+            o.refund_process_time,
+            o.refund_process_remark,
+            o.refund_reject_reason,
+            o.return_tracking_number,
+            o.create_time,
+            a.receiver_name,
+            a.receiver_phone,
+            CONCAT(a.province, a.city, a.district, a.detail_address) as receiver_address,
+            oi.item_id,
+            oi.product_id,
+            oi.product_name,
+            oi.product_price,
+            COALESCE(p.first_picture_url, oi.product_image, '/static/img/demo1.jpg') as product_image,
+            oi.quantity
+        FROM business_order o
+        LEFT JOIN business_address a ON o.address_id = a.address_id
+        LEFT JOIN business_author au ON o.author_id = au.author_id
+        LEFT JOIN business_order_item oi ON o.order_id = oi.order_id
+        LEFT JOIN business_product p ON oi.product_id = p.product_id
+        WHERE o.deleted = 0
+        <if test="orderDto.authorId != null and orderDto.authorId != ''">
+            AND o.author_id = #{orderDto.authorId}
+        </if>
+        <if test="orderDto.orderStatus != null">
+            AND o.order_status = #{orderDto.orderStatus}
+        </if>
+        ORDER BY o.create_time DESC
+    </select>
+
+    <!-- 根据ID获取订单详情 -->
+    <select id="selectOrderById" resultMap="OrderVoResultMap">
+        SELECT 
+            o.order_id,
+            o.order_no,
+            o.author_id,
+            au.author_name,
+            o.address_id,
+            o.total_amount,
+            o.order_status,
+            o.pay_time,
+            o.ship_time,
+            o.tracking_number,
+            o.complete_time,
+            o.cancel_time,
+            o.cancel_reason,
+            o.remark,
+            o.refund_amount,
+            o.refund_reason,
+            o.refund_apply_time,
+            o.refund_process_time,
+            o.refund_process_remark,
+            o.refund_reject_reason,
+            o.return_tracking_number,
+            o.create_time,
+            a.receiver_name,
+            a.receiver_phone,
+            CONCAT(a.province, a.city, a.district, a.detail_address) as receiver_address,
+            oi.item_id,
+            oi.product_id,
+            oi.product_name,
+            oi.product_price,
+            COALESCE(p.first_picture_url, oi.product_image, '/static/img/demo1.jpg') as product_image,
+            oi.quantity
+        FROM business_order o
+        LEFT JOIN business_address a ON o.address_id = a.address_id
+        LEFT JOIN business_author au ON o.author_id = au.author_id
+        LEFT JOIN business_order_item oi ON o.order_id = oi.order_id
+        LEFT JOIN business_product p ON oi.product_id = p.product_id
+        WHERE o.order_id = #{orderId} AND o.deleted = 0
+    </select>
+
+    <!-- 根据订单号获取订单详情 -->
+    <select id="selectOrderByOrderNo" resultMap="OrderVoResultMap">
+        SELECT 
+            o.order_id,
+            o.order_no,
+            o.author_id,
+            au.author_name,
+            o.address_id,
+            o.total_amount,
+            o.goods_amount,
+            o.shipping_fee,
+            o.order_status,
+            o.pay_time,
+            o.ship_time,
+            o.tracking_number,
+            o.complete_time,
+            o.cancel_time,
+            o.cancel_reason,
+            o.remark,
+            o.refund_amount,
+            o.refund_reason,
+            o.refund_apply_time,
+            o.refund_process_time,
+            o.refund_process_remark,
+            o.refund_reject_reason,
+            o.return_tracking_number,
+            o.create_time,
+            a.receiver_name,
+            a.receiver_phone,
+            CONCAT(a.province, a.city, a.district, a.detail_address) as receiver_address,
+            oi.item_id,
+            oi.product_id,
+            oi.product_name,
+            oi.product_price,
+            COALESCE(p.first_picture_url, oi.product_image, '/static/img/demo1.jpg') as product_image,
+            oi.quantity
+        FROM business_order o
+        LEFT JOIN business_address a ON o.address_id = a.address_id
+        LEFT JOIN business_author au ON o.author_id = au.author_id
+        LEFT JOIN business_order_item oi ON o.order_id = oi.order_id
+        LEFT JOIN business_product p ON oi.product_id = p.product_id
+        WHERE o.order_no = #{orderNo} AND o.deleted = 0
+    </select>
+
+</mapper>

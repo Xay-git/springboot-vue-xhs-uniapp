@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.business.cart.mapper.CartMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.business.cart.entity.Cart">
+        <id column="CART_ID" property="cartId" />
+        <result column="AUTHOR_ID" property="authorId" />
+        <result column="PRODUCT_ID" property="productId" />
+        <result column="PRODUCT_NAME" property="productName" />
+        <result column="PRODUCT_PRICE" property="productPrice" />
+        <result column="PRODUCT_IMAGE" property="productImage" />
+        <result column="QUANTITY" property="quantity" />
+        <result column="SELECTED" property="selected" />
+        <result column="VERSION" property="version" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="UPDATE_TIME" property="updateTime" />
+    </resultMap>
+
+    <!-- CartVo查询映射结果 -->
+    <resultMap id="CartVoResultMap" type="com.dd.admin.business.cart.vo.CartVo">
+        <id column="CART_ID" property="cartId" />
+        <result column="AUTHOR_ID" property="authorId" />
+        <result column="PRODUCT_ID" property="productId" />
+        <result column="PRODUCT_NAME" property="productName" />
+        <result column="PRODUCT_PRICE" property="productPrice" />
+        <result column="PRODUCT_IMAGE" property="productImage" />
+        <result column="QUANTITY" property="quantity" />
+        <result column="SELECTED" property="selected" />
+        <result column="SHIPPING_FEE" property="shippingFee" />
+        <result column="VERSION" property="version" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="UPDATE_TIME" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        CART_ID, AUTHOR_ID, PRODUCT_ID, PRODUCT_NAME, PRODUCT_PRICE, PRODUCT_IMAGE, QUANTITY, SELECTED, SHIPPING_FEE, VERSION, CREATE_TIME, UPDATE_TIME
+    </sql>
+
+    <!-- 分页查询购物车 -->
+    <select id="selectCartPage" resultMap="CartVoResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM business_cart
+        WHERE 1=1
+        <if test="cartDto.cartId != null and cartDto.cartId != ''">
+            AND CART_ID = #{cartDto.cartId}
+        </if>
+        <if test="cartDto.userId != null and cartDto.userId != ''">
+            AND USER_ID = #{cartDto.userId}
+        </if>
+        <if test="cartDto.productId != null and cartDto.productId != ''">
+            AND PRODUCT_ID = #{cartDto.productId}
+        </if>
+        <if test="cartDto.productName != null and cartDto.productName != ''">
+            AND PRODUCT_NAME LIKE CONCAT('%', #{cartDto.productName}, '%')
+        </if>
+        <if test="cartDto.selected != null">
+            AND SELECTED = #{cartDto.selected}
+        </if>
+        ORDER BY CREATE_TIME DESC
+    </select>
+
+    <!-- 查询购物车列表 -->
+    <select id="selectCartList" resultMap="CartVoResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM business_cart
+        WHERE 1=1
+        <if test="cartDto.cartId != null and cartDto.cartId != ''">
+            AND CART_ID = #{cartDto.cartId}
+        </if>
+        <if test="cartDto.userId != null and cartDto.userId != ''">
+            AND USER_ID = #{cartDto.userId}
+        </if>
+        <if test="cartDto.productId != null and cartDto.productId != ''">
+            AND PRODUCT_ID = #{cartDto.productId}
+        </if>
+        <if test="cartDto.productName != null and cartDto.productName != ''">
+            AND PRODUCT_NAME LIKE CONCAT('%', #{cartDto.productName}, '%')
+        </if>
+        <if test="cartDto.selected != null">
+            AND SELECTED = #{cartDto.selected}
+        </if>
+        ORDER BY CREATE_TIME DESC
+    </select>
+
+    <!-- 根据ID查询购物车详情 -->
+    <select id="selectCartById" resultMap="CartVoResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM business_cart
+        WHERE CART_ID = #{cartId}
+    </select>
+
+    <!-- 根据用户ID查询购物车列表 -->
+    <select id="getUserCartList" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM business_cart
+        WHERE AUTHOR_ID = #{authorId}
+        ORDER BY CREATE_TIME DESC
+    </select>
+
+    <!-- 更新购物车数量 -->
+    <update id="updateCartQuantity">
+        UPDATE business_cart
+        SET QUANTITY = #{quantity},
+            UPDATE_TIME = NOW()
+        WHERE CART_ID = #{cartId}
+    </update>
+
+    <!-- 更新购物车选中状态 -->
+    <update id="updateCartSelected">
+        UPDATE business_cart
+        SET SELECTED = #{selected},
+            UPDATE_TIME = NOW()
+        WHERE CART_ID = #{cartId}
+    </update>
+
+    <!-- 根据用户ID和商品ID查询购物车记录 -->
+    <select id="selectByAuthorIdAndProductId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM business_cart
+        WHERE AUTHOR_ID = #{authorId} AND PRODUCT_ID = #{productId}
+        LIMIT 1
+    </select>
+
+    <!-- 根据用户ID和商品ID删除购物车记录 -->
+    <delete id="deleteByAuthorIdAndProductId">
+        DELETE FROM business_cart
+        WHERE AUTHOR_ID = #{authorId} AND PRODUCT_ID = #{productId}
+    </delete>
+
+</mapper>

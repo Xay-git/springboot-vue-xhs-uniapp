@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.business.history.mapper.HistoryMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.business.history.entity.History">
+        <id column="HISTORY_ID" property="historyId" />
+        <result column="AUTHOR_ID" property="authorId" />
+        <result column="AURHOR_NAME" property="aurhorName" />
+        <result column="CONTENT" property="content" />
+        <result column="DELETED" property="deleted" />
+        <result column="CREATE_TIME" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        HISTORY_ID, AUTHOR_ID, AURHOR_NAME, CONTENT, DELETED, CREATE_TIME
+    </sql>
+
+    <select id="selectHistoryPage" resultType="com.dd.admin.business.history.domain.HistoryVo">
+        select
+        *
+        from business_history where 1 = 1
+    </select>
+
+    <select id="selectHistoryList" resultType="com.dd.admin.business.history.domain.HistoryVo">
+        select
+        *
+        from business_history where deleted = 0
+        <if test="historyDto.authorId != null and historyDto.authorId != ''">
+            and AUTHOR_ID = #{historyDto.authorId}
+        </if>
+        group by content
+        order by create_time desc limit 10
+    </select>
+    <select id="selectHotHistoryList" resultType="com.dd.admin.business.history.domain.HistoryVo">
+        SELECT
+            CONTENT,
+            count(1) count
+        FROM
+            business_history
+        GROUP BY
+            CONTENT
+        order by count desc limit 6
+    </select>
+</mapper>

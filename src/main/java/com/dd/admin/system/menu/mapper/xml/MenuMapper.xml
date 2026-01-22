@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.system.menu.mapper.MenuMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.system.menu.entity.Menu">
+        <id column="MENU_ID" property="menuId" />
+        <result column="PARENT_ID" property="parentId" />
+        <result column="MENU_TITLE" property="menuTitle" />
+        <result column="MENU_NAME" property="menuName" />
+        <result column="MENU_ICON" property="menuIcon" />
+        <result column="MENU_PATH" property="menuPath" />
+        <result column="COMPONENT" property="component" />
+        <result column="PERMS" property="perms" />
+        <result column="MENU_TYPE" property="menuType" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="CREATE_NAME" property="createName" />
+        <result column="CREATE_ID" property="createId" />
+        <result column="UPDATE_TIME" property="updateTime" />
+        <result column="UPDATE_NAME" property="updateName" />
+        <result column="UPDATE_ID" property="updateId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        MENU_ID, PARENT_ID, MENU_TITLE, MENU_NAME, MENU_ICON, MENU_PATH, MENU_CACHE, COMPONENT, PERMS, MENU_TYPE, CREATE_TIME, CREATE_NAME, CREATE_ID, UPDATE_TIME, UPDATE_NAME, UPDATE_ID
+    </sql>
+
+    <select id="selectMenuPage" resultType="com.dd.admin.system.menu.domain.MenuVo">
+        select
+        *
+        from sys_menu where 1 = 1
+    </select>
+
+    <select id="selectMenuList" resultType="com.dd.admin.system.menu.domain.MenuVo">
+        select
+        *
+        from sys_menu where 1 = 1
+    </select>
+
+    <select id="selectMenuByUserId" resultType="com.dd.admin.system.menu.domain.MenuVo">
+        SELECT
+            m.*
+        FROM
+            sys_role r
+        LEFT JOIN sys_user_role ur ON (r.role_id = ur.role_id)
+        LEFT JOIN sys_user u ON (u.user_id = ur.user_id)
+        LEFT JOIN sys_role_menu rm ON (rm.role_id = r.role_id)
+        LEFT JOIN sys_menu m ON (m.menu_id = rm.menu_id) where u.user_id = #{userId} and m.menu_id is not null GROUP BY MENU_ID order by m.menu_sort
+    </select>
+</mapper>

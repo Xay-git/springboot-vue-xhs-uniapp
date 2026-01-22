@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.business.upNotes.mapper.UpNotesMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.business.upNotes.entity.UpNotes">
+        <id column="UP_NOTE_ID" property="upNoteId" />
+        <result column="NOTE_ID" property="noteId" />
+        <result column="NOTE_TITLE" property="noteTitle" />
+        <result column="AUTHOR_ID" property="authorId" />
+        <result column="AUTHOR_NAME" property="authorName" />
+        <result column="FOLLOW_ID" property="followId" />
+        <result column="FOLLOW_NAME" property="followName" />
+        <result column="CREATE_TIME" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        UP_NOTE_ID, NOTE_ID, NOTE_TITLE, AUTHOR_ID, AUTHOR_NAME, FOLLOW_ID, FOLLOW_NAME, CREATE_TIME
+    </sql>
+
+    <select id="selectUpNotesPage" resultType="com.dd.admin.business.upNotes.domain.UpNotesVo">
+        select
+        *
+        from business_up_notes where 1 = 1
+    </select>
+
+    <select id="selectUpNotesList" resultType="com.dd.admin.business.upNotes.domain.UpNotesVo">
+        select
+        *
+        from business_up_notes where 1 = 1
+        <if test="upNotesDto.followId != null and upNotesDto.followId != ''">
+            and FOLLOW_ID = #{upNotesDto.followId}
+        </if>
+    </select>
+    <select id="selectAllUpCount" resultType="com.dd.admin.business.upNotes.domain.UpNotesVo">
+        select note_id,count(1) upCount from business_up_notes group by NOTE_ID
+    </select>
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.business.notice.mapper.NoticeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.business.notice.entity.Notice">
+        <result column="NOTICE_ID" property="noticeId" />
+        <result column="NOTICE_TITLE" property="noticeTitle" />
+        <result column="NOTICE_CONTENT" property="noticeContent" />
+        <result column="REDIRECT_URL" property="redirectUrl" />
+        <result column="VERSION" property="version" />
+        <result column="DELETED" property="deleted" />
+        <result column="SHOP_ID" property="shopId" />
+        <result column="SHOP_NAME" property="shopName" />
+        <result column="CREATE_NAME" property="createName" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="CREATE_ID" property="createId" />
+        <result column="UPDATE_TIME" property="updateTime" />
+        <result column="UPDATE_NAME" property="updateName" />
+        <result column="UPDATE_ID" property="updateId" />
+        <result column="NOTICE_TYPE" property="noticeType" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        NOTICE_ID, NOTICE_TITLE, NOTICE_CONTENT, REDIRECT_URL, VERSION, DELETED, SHOP_ID, SHOP_NAME, CREATE_NAME, CREATE_TIME, CREATE_ID, UPDATE_TIME, UPDATE_NAME, UPDATE_ID, NOTICE_TYPE
+    </sql>
+
+    <select id="selectNoticePage" resultType="com.dd.admin.business.notice.domain.NoticeVo">
+        select
+        *
+        from business_notice where 1 = 1
+    </select>
+
+    <select id="selectNoticeList" resultType="com.dd.admin.business.notice.domain.NoticeVo">
+        select
+        *
+        from business_notice where 1 = 1
+    </select>
+</mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.business.product.mapper.ProductCategoryMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.business.product.entity.ProductCategory">
+        <id column="CATEGORY_ID" property="categoryId" />
+        <result column="CATEGORY_NAME" property="categoryName" />
+        <result column="PARENT_ID" property="parentId" />
+        <result column="CATEGORY_LEVEL" property="categoryLevel" />
+        <result column="CATEGORY_SORT" property="categorySort" />
+        <result column="CATEGORY_STATUS" property="categoryStatus" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="CREATE_NAME" property="createName" />
+        <result column="CREATE_ID" property="createId" />
+        <result column="UPDATE_TIME" property="updateTime" />
+        <result column="UPDATE_NAME" property="updateName" />
+        <result column="UPDATE_ID" property="updateId" />
+        <result column="VERSION" property="version" />
+        <result column="DELETED" property="deleted" />
+        <result column="BRAND_ID" property="brandId" />
+        <result column="BRAND_NAME" property="brandName" />
+        <result column="SHOP_ID" property="shopId" />
+        <result column="SHOP_NAME" property="shopName" />
+        <result column="DEPT_NAME" property="deptName" />
+        <result column="DEPT_ID" property="deptId" />
+        <result column="REMARK" property="remark" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        CATEGORY_ID, CATEGORY_NAME, PARENT_ID, CATEGORY_LEVEL, CATEGORY_SORT, CATEGORY_STATUS, CREATE_TIME, CREATE_NAME, CREATE_ID, UPDATE_TIME, UPDATE_NAME, UPDATE_ID, VERSION, DELETED, BRAND_ID, BRAND_NAME, SHOP_ID, SHOP_NAME, DEPT_NAME, DEPT_ID, REMARK
+    </sql>
+
+</mapper>

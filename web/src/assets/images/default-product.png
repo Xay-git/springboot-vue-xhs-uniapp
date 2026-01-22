@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <rect width="200" height="200" fill="#f5f5f5" stroke="#ddd" stroke-width="2"/>
+  <rect x="50" y="60" width="100" height="80" fill="#e0e0e0" rx="5"/>
+  <circle cx="70" cy="80" r="8" fill="#ccc"/>
+  <path d="M60 120 L80 100 L100 110 L120 90 L140 100 L140 130 L60 130 Z" fill="#d0d0d0"/>
+  <text x="100" y="160" text-anchor="middle" font-family="Arial" font-size="12" fill="#999">商品图片</text>
+</svg>

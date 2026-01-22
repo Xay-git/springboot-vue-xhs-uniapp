@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.business.noteImg.mapper.NoteImgMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.business.noteImg.entity.NoteImg">
+        <id column="NOTE_IMG_ID" property="noteImgId" />
+        <result column="IMG_ID" property="imgId" />
+        <result column="NOTE_ID" property="noteId" />
+        <result column="IMG_SORT" property="imgSort" />
+        <result column="AUTHOR_ID" property="authorId" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="UPDATE_TIME" property="updateTime" />
+        <result column="IMG_URL" property="imgUrl" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        NOTE_IMG_ID, IMG_ID, NOTE_ID, IMG_SORT, AUTHOR_ID, CREATE_TIME, UPDATE_TIME, IMG_URL
+    </sql>
+
+    <select id="selectNoteImgPage" resultType="com.dd.admin.business.noteImg.domain.NoteImgVo">
+        select
+        *
+        from business_note_img where 1 = 1
+    </select>
+
+    <select id="selectNoteImgList" resultType="com.dd.admin.business.noteImg.domain.NoteImgVo">
+        select
+        *
+        from business_note_img where 1 = 1
+        <if test="noteImgDto.noteId != null and noteImgDto.noteId != ''">
+            and note_id = #{noteImgDto.noteId}
+        </if>
+        order by IMG_SORT asc
+    </select>
+
+</mapper>

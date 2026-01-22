@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.business.reply.mapper.ReplyMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.business.reply.entity.Reply">
+        <id column="REPLY_ID" property="replyId" />
+        <result column="NOTE_ID" property="noteId" />
+        <result column="NOTE_TITLE" property="noteTitle" />
+        <result column="AUTHOR_ID" property="authorId" />
+        <result column="AUTHOR_NAME" property="authorName" />
+        <result column="PARENT_ID" property="parentId" />
+        <result column="REPLAY_CONTENT" property="replayContent" />
+        <result column="REPLAY_IMG_ID" property="replayImgId" />
+        <result column="REPLAY_IMG_URL" property="replayImgUrl" />
+        <result column="DELETED" property="deleted" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="IP_ADDRESS" property="ipAddress" />
+        <result column="IP_REAL_ADDRESS" property="ipRealAddress" />
+        <result column="FIRST_REPLAY" property="firstReplay" />
+        <result column="AUTHOR_REPLAY" property="authorReplay" />
+        <result column="REPLAY_STATUS" property="replayStatus" />
+        <result column="REPLAY_TYPE" property="replayType" />
+        <result column="UP_COUNT" property="upCount" />
+        <result column="AVATAR_URL" property="avatarUrl" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        REPLY_ID, NOTE_ID, NOTE_TITILE, AUTHOR_ID, AUTHOR_NAME, PARENT_ID, REPLAY_CONTENT, REPLAY_IMG_ID, REPLAY_IMG_URL, DELETED, CREATE_TIME, IP_ADDRESS, IP_REAL_ADDRESS, FIRST_REPLAY, AUTHOR_REPLAY, REPLAY_STATUS, REPLAY_TYPE, UP_COUNT, AVATAR_URL
+    </sql>
+
+    <select id="selectReplyPage" resultType="com.dd.admin.business.reply.domain.ReplyVo">
+        select
+        *
+        from business_reply where 1 = 1
+    </select>
+
+    <select id="selectReplyList" resultType="com.dd.admin.business.reply.domain.ReplyVo">
+        SELECT
+        ba.AUTHOR_NAME,ba.avatar_url,r.*,
+        COALESCE(COUNT(urp.REPLY_UP_ID), 0) AS upCount
+        <if test="replyDto.followId!= null and replyDto.followId!= ''">
+            ,CASE WHEN EXISTS (
+            SELECT 1
+            FROM business_up_replys sub_urp
+            WHERE sub_urp.REPLY_ID = r.reply_id
+            AND sub_urp.FOLLOW_ID = #{replyDto.followId}
+            ) THEN true ELSE false END AS isUp
+        </if>
+        FROM
+        business_reply r
+        LEFT JOIN
+        business_up_replys urp ON r.reply_id = urp.REPLY_ID
+        left join
+        business_author ba on r.AUTHOR_ID = ba.AUTHOR_ID
+        WHERE
+        r.DELETED = 0
+        <if test="replyDto.noteId!= null and replyDto.noteId!= ''">
+            AND r.NOTE_ID = #{replyDto.noteId}
+        </if>
+        GROUP BY
+        r.reply_id
+        ORDER BY
+        upCount ASC, r.create_time DESC
+    </select>
+
+
+
+</mapper>

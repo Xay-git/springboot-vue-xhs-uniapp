@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.business.chat.mapper.ChatMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.business.chat.entity.Chat">
+        <id column="CHAT_ID" property="chatId" />
+        <result column="FROM_ID" property="fromId" />
+        <result column="FROM_NAME" property="fromName" />
+        <result column="TO_ID" property="toId" />
+        <result column="TO_NAME" property="toName" />
+        <result column="MESSAGE_TYPE" property="messageType" />
+        <result column="MESSAGE_STATUS" property="messageStatus" />
+        <result column="CONTENT" property="content" />
+        <result column="RESOURCE_URL" property="resourceUrl" />
+        <result column="DELETED" property="deleted" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="IP_ADDRESS" property="ipAddress" />
+        <result column="IP_REAL_ADDRESS" property="ipRealAddress" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        CHAT_ID, FROM_ID, FROM_NAME, TO_ID, TO_NAME, MESSAGE_TYPE, MESSAGE_STATUS, CONTENT, RESOURCE_URL, DELETED, CREATE_TIME, IP_ADDRESS, IP_REAL_ADDRESS
+    </sql>
+
+    <select id="selectChatPage" resultType="com.dd.admin.business.chat.domain.ChatVo">
+        select
+        a.*,
+        b.AVATAR_URL as toAvatar,
+        c.AVATAR_URL as fromAvatar
+        from business_chat a
+        left join business_author b on a.to_id = b.author_id
+        left join business_author c on a.from_id = c.author_id
+        where
+        ( (a.from_id = #{chatDto.fromId} and a.to_id = #{chatDto.toId})
+          or (a.from_id = #{chatDto.toId} and a.to_id = #{chatDto.fromId}))
+        order by create_time desc
+    </select>
+
+    <select id="selectChatDetail" resultType="com.dd.admin.business.chat.domain.ChatVo">
+        select
+        *
+        from business_chat where 1 = 1
+    </select>
+    <select id="selectChat" resultType="com.dd.admin.business.chat.domain.ChatVo"
+            parameterType="com.dd.admin.business.chat.domain.ChatDto">
+        select
+        a.*,
+        b.AVATAR_URL as toAvatar,
+        c.AVATAR_URL as fromAvatar
+        from business_chat a
+        left join business_author b on a.to_id = b.author_id
+        left join business_author c on a.from_id = c.author_id
+        where 1 = 1
+        <if test="chatId!= null and chatId!= ''">
+            and a.chat_id = #{chatId}
+        </if>
+        limit 1
+    </select>
+    <select id="getMessageList" resultType="com.dd.admin.business.chat.domain.ChatVo"
+            parameterType="java.lang.String">
+        select * from (
+            SELECT
+                a.FROM_ID AS authorId,
+                b.AUTHOR_NAME AS authorName,
+                b.AVATAR_URL AS authorAvatar,
+                a.content,
+                a.MESSAGE_TYPE AS messageType,
+                a.create_time,
+                (
+                    SELECT
+                        count(1)
+                    FROM
+                        business_chat ca
+                    WHERE
+                        ca.FROM_ID = a.FROM_ID
+                    AND ca.to_id = #{authorId}
+                    and ca.MESSAGE_STATUS = 0
+                ) as unReadCount
+            FROM
+                business_chat a
+                    LEFT JOIN
+                business_author b ON a.FROM_ID = b.AUTHOR_ID
+            WHERE
+                a.TO_ID = #{authorId}
+
+
+            UNION ALL
+
+
+            SELECT
+                a.TO_ID AS authorId,
+                b.AUTHOR_NAME AS authorName,
+                b.AVATAR_URL AS authorAvatar,
+                a.content,
+                a.MESSAGE_TYPE AS messageType,
+                a.create_time,
+                0 as unReadCount
+            FROM
+                business_chat a
+                    LEFT JOIN
+                business_author b ON a.TO_ID = b.AUTHOR_ID
+            WHERE
+                a.FROM_ID = #{authorId}
+                ORDER BY
+                create_time DESC
+
+            ) a1
+            GROUP BY a1.authorId
+              ORDER BY
+                create_time DESC
+    </select>
+
+
+
+    <select id="selectAuthorChatList" resultType="com.dd.admin.business.chat.domain.AuthorChat">
+           SELECT
+            *
+        FROM
+            (
+                SELECT
+                    a.FROM_ID AS id,
+                    b.AUTHOR_NAME AS displayName,
+              b.AUTHOR_NAME AS 'index',
+                    b.AVATAR_URL AS avatar,
+                    a.content lastContent,
+                    a.create_time,
+                    (
+                        SELECT
+                            count(1)
+                        FROM
+                            business_chat ca
+                        WHERE
+                            ca.FROM_ID = a.FROM_ID
+                        AND ca.to_id = '8'
+                        AND ca.MESSAGE_STATUS = 0
+                    ) AS unRead
+                FROM
+                    business_chat a
+                LEFT JOIN business_author b ON a.FROM_ID = b.AUTHOR_ID
+                WHERE
+                    a.TO_ID = '8'
+                UNION ALL
+                    SELECT
+                        a.TO_ID AS id,
+                        b.AUTHOR_NAME AS displayName,
+                b.AUTHOR_NAME AS 'index',
+                        b.AVATAR_URL AS avatar,
+                        a.content lastContent,
+                        a.create_time,
+                        0 AS unRead
+                    FROM
+                        business_chat a
+                    LEFT JOIN business_author b ON a.TO_ID = b.AUTHOR_ID
+                    WHERE
+                        a.FROM_ID = '8'
+                    ORDER BY
+                        create_time DESC
+            ) a1
+        GROUP BY
+            a1.id
+        ORDER BY
+            create_time DESC
+    </select>
+</mapper>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+  <rect width="120" height="120" fill="#fafafa"/>
+  <!-- 订单列表背景 -->
+  <rect x="30" y="25" width="60" height="70" fill="#f8f8f8" stroke="#ddd" stroke-width="2" rx="3"/>
+  <!-- 订单列表项 -->
+  <rect x="35" y="30" width="50" height="8" fill="#f0f0f0" rx="1"/>
+  <rect x="35" y="42" width="35" height="6" fill="#f0f0f0" rx="1"/>
+  <rect x="35" y="52" width="40" height="6" fill="#f0f0f0" rx="1"/>
+  <rect x="35" y="62" width="30" height="6" fill="#f0f0f0" rx="1"/>
+  <!-- 订单图标 -->
+  <rect x="40" y="75" width="40" height="15" fill="#e8e8e8" stroke="#ddd" stroke-width="1" rx="2"/>
+  <circle cx="45" cy="82" r="2" fill="#ccc"/>
+  <rect x="50" y="80" width="25" height="2" fill="#ccc" rx="1"/>
+  <rect x="50" y="84" width="20" height="2" fill="#ccc" rx="1"/>
+  <text x="60" y="110" text-anchor="middle" font-family="Arial" font-size="10" fill="#999">暂无订单</text>
+</svg>

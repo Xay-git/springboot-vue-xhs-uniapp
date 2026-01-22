@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dd.admin.business.balance.mapper.BalanceLogMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.dd.admin.business.balance.entity.BalanceLog">
+        <id column="LOG_ID" property="logId" />
+        <result column="AUTHOR_ID" property="authorId" />
+        <result column="AMOUNT" property="amount" />
+        <result column="BEFORE_BALANCE" property="beforeBalance" />
+        <result column="AFTER_BALANCE" property="afterBalance" />
+        <result column="TYPE" property="type" />
+        <result column="RELATED_ID" property="relatedId" />
+        <result column="OPERATOR_ID" property="operatorId" />
+        <result column="OPERATOR_NAME" property="operatorName" />
+        <result column="VERSION" property="version" />
+        <result column="DELETED" property="deleted" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="CREATE_NAME" property="createName" />
+        <result column="CREATE_ID" property="createId" />
+        <result column="UPDATE_TIME" property="updateTime" />
+        <result column="UPDATE_NAME" property="updateName" />
+        <result column="UPDATE_ID" property="updateId" />
+        <result column="BRAND_ID" property="brandId" />
+        <result column="BRAND_NAME" property="brandName" />
+        <result column="SHOP_ID" property="shopId" />
+        <result column="SHOP_NAME" property="shopName" />
+        <result column="DEPT_NAME" property="deptName" />
+        <result column="DEPT_ID" property="deptId" />
+        <result column="REMARK" property="remark" />
+    </resultMap>
+
+    <!-- BalanceLogVo结果映射 -->
+    <resultMap id="BalanceLogVoResultMap" type="com.dd.admin.business.balance.vo.BalanceLogVo">
+        <id column="LOG_ID" property="logId" />
+        <result column="AUTHOR_ID" property="authorId" />
+        <result column="AMOUNT" property="amount" />
+        <result column="BEFORE_BALANCE" property="beforeBalance" />
+        <result column="AFTER_BALANCE" property="afterBalance" />
+        <result column="TYPE" property="type" />
+        <result column="RELATED_ID" property="relatedId" />
+        <result column="OPERATOR_ID" property="operatorId" />
+        <result column="OPERATOR_NAME" property="operatorName" />
+        <result column="CREATE_TIME" property="createTime" />
+        <result column="UPDATE_TIME" property="updateTime" />
+        <result column="VERSION" property="version" />
+        <result column="DELETED" property="deleted" />
+        <result column="REMARK" property="remark" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        BALANCE_LOG_ID, AUTHOR_ID, AMOUNT, BALANCE_BEFORE, BALANCE_AFTER, TYPE, RELATED_ID,
+        OPERATOR_ID, OPERATOR_NAME, VERSION, DELETED, CREATE_TIME, CREATE_NAME, CREATE_ID,
+        UPDATE_TIME, UPDATE_NAME, UPDATE_ID, BRAND_ID, BRAND_NAME, SHOP_ID, SHOP_NAME,
+        DEPT_NAME, DEPT_ID, REMARK
+    </sql>
+
+    <!-- 分页查询余额日志 -->
+    <select id="selectBalanceLogPage" resultMap="BalanceLogVoResultMap">
+        SELECT
+            bl.LOG_ID,
+            bl.AUTHOR_ID,
+            bl.AMOUNT,
+            bl.BEFORE_BALANCE,
+            bl.AFTER_BALANCE,
+            bl.TYPE,
+            bl.RELATED_ID,
+            bl.OPERATOR_ID,
+            bl.OPERATOR_NAME,
+            bl.CREATE_TIME,
+            bl.UPDATE_TIME,
+            bl.VERSION,
+            bl.DELETED,
+            bl.REMARK
+        FROM business_balance_log bl
+        WHERE bl.DELETED = 0
+        <if test="dto.authorId != null and dto.authorId != ''">
+            AND bl.AUTHOR_ID = #{dto.authorId}
+        </if>
+        <if test="dto.type != null">
+            AND bl.TYPE = #{dto.type}
+        </if>
+        <if test="dto.relatedId != null and dto.relatedId != ''">
+            AND bl.RELATED_ID = #{dto.relatedId}
+        </if>
+        <if test="dto.operatorId != null and dto.operatorId != ''">
+            AND bl.OPERATOR_ID = #{dto.operatorId}
+        </if>
+        <if test="dto.startTime != null and dto.startTime != ''">
+            AND bl.CREATE_TIME <![CDATA[>=]]> #{dto.startTime}
+        </if>
+        <if test="dto.endTime != null and dto.endTime != ''">
+            AND bl.CREATE_TIME <![CDATA[<=]]> #{dto.endTime}
+        </if>
+        ORDER BY bl.CREATE_TIME DESC
+    </select>
+
+    <!-- 查询余额日志列表 -->
+    <select id="selectBalanceLogList" resultMap="BalanceLogVoResultMap">
+        SELECT
+            bl.LOG_ID,
+            bl.AUTHOR_ID,
+            bl.AMOUNT,
+            bl.BEFORE_BALANCE,
+            bl.AFTER_BALANCE,
+            bl.TYPE,
+            bl.RELATED_ID,
+            bl.OPERATOR_ID,
+            bl.OPERATOR_NAME,
+            bl.CREATE_TIME,
+            bl.UPDATE_TIME,
+            bl.VERSION,
+            bl.DELETED,
+            bl.REMARK
+        FROM business_balance_log bl
+        WHERE bl.DELETED = 0
+        <if test="dto.authorId != null and dto.authorId != ''">
+            AND bl.AUTHOR_ID = #{dto.authorId}
+        </if>
+        <if test="dto.type != null">
+            AND bl.TYPE = #{dto.type}
+        </if>
+        <if test="dto.relatedId != null and dto.relatedId != ''">
+            AND bl.RELATED_ID = #{dto.relatedId}
+        </if>
+        <if test="dto.operatorId != null and dto.operatorId != ''">
+            AND bl.OPERATOR_ID = #{dto.operatorId}
+        </if>
+        <if test="dto.startTime != null and dto.startTime != ''">
+            AND bl.CREATE_TIME <![CDATA[>=]]> #{dto.startTime}
+        </if>
+        <if test="dto.endTime != null and dto.endTime != ''">
+            AND bl.CREATE_TIME <![CDATA[<=]]> #{dto.endTime}
+        </if>
+        ORDER BY bl.CREATE_TIME DESC
+    </select>
+
+
+
+</mapper>
